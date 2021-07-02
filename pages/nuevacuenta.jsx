@@ -1,10 +1,10 @@
+import { useState } from 'react';
 import Layout from '../components/Layout';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, gql } from '@apollo/client';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import { useEffect } from 'react';
 
 const gqlNuevaCuenta = gql`
   mutation nuevoUsuario($usuario: UsuarioInput) {
@@ -20,6 +20,9 @@ const gqlNuevaCuenta = gql`
 const NuevaCuenta = () => {
   // Mutation para crear nuevo usuarios
   const [nuevoUsuario] = useMutation(gqlNuevaCuenta);
+
+  // Estado para mensajes
+  const [mensaje, setMensaje] = useState(null);
 
   const formik = useFormik({
     initialValues: {
@@ -53,15 +56,28 @@ const NuevaCuenta = () => {
             },
           },
         });
-        console.log(data);
+        // console.log(data);
       } catch (error) {
         const { message } = error;
+        setMensaje(message);
+        setTimeout(() => {
+          setMensaje(null);
+        }, 5000);
       }
     },
   });
 
+  const mostrarMensaje = () => {
+    return (
+      <div className=" bg-red-100 py-2 px-3 w-full my-3 max-w-sm text-center mx-auto rounded ">
+        <p>{mensaje}</p>
+      </div>
+    );
+  };
+
   return (
     <Layout>
+      {mensaje && mostrarMensaje()}
       <h1 className="text-center text-white text-2xl font-light">Crear Nueva Cuenta</h1>
 
       <div className="flex justify-center mt-5">
