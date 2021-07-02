@@ -43,7 +43,6 @@ const NuevaCuenta = () => {
         .required('El password de confirmacion es requerido')
         .oneOf([Yup.ref('password'), null], 'Las contraseñas deben coincidir'),
     }),
-
     onSubmit: async (values) => {
       const { nombre, apellido, email, password } = values;
 
@@ -77,7 +76,7 @@ const NuevaCuenta = () => {
 
   const mostrarMensaje = () => {
     return (
-      <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto rounded ">
+      <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto rounded">
         <p>{mensaje}</p>
       </div>
     );

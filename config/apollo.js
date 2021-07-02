@@ -1,12 +1,27 @@
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import fetch from 'node-fetch';
+import { setContext } from 'apollo-link-context';
+
+const httpLink = createHttpLink({
+  uri: 'http://localhost:4001',
+  fetch,
+});
+
+const authLink = setContext((_, { headers }) => {
+  // Leer el localstorage
+  const token = localStorage.getItem('token') || null;
+
+  return {
+    headers: {
+      ...headers,
+      authorization: token,
+    },
+  };
+});
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
-  link: new HttpLink({
-    uri: 'http://localhost:4001',
-    fetch,
-  }),
+  link: authLink.concat(httpLink),
 });
 
 export default client;

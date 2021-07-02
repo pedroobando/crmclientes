@@ -1,7 +1,5 @@
 import { ApolloProvider } from '@apollo/client';
 import client from '../config/apollo';
-import 'tailwindcss/tailwind.css';
-// import '../styles/globals.css';
 
 const MyApp = ({ Component, pageProps }) => {
   return (

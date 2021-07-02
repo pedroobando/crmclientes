@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Sidebar from '../components/Sidebar';
 import { useRouter } from 'next/router';
+import 'tailwindcss/tailwind.css';
 
 const Layout = ({ children }) => {
   const router = useRouter();
