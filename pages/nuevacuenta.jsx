@@ -1,8 +1,26 @@
 import Layout from '../components/Layout';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useMutation, gql } from '@apollo/client';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
+import { useEffect } from 'react';
+
+const gqlNuevaCuenta = gql`
+  mutation nuevoUsuario($usuario: UsuarioInput) {
+    nuevoUsuario(usuario: $usuario) {
+      id
+      nombre
+      apellido
+      email
+    }
+  }
+`;
 
 const NuevaCuenta = () => {
+  // Mutation para crear nuevo usuarios
+  const [nuevoUsuario] = useMutation(gqlNuevaCuenta);
+
   const formik = useFormik({
     initialValues: {
       nombre: '',
@@ -20,10 +38,28 @@ const NuevaCuenta = () => {
         .required('El password de confirmacion es requerido')
         .oneOf([Yup.ref('password'), null], 'Las contraseñas deben coincidir'),
     }),
-    onSubmit: (values) => {
-      console.log(values);
+
+    onSubmit: async (values) => {
+      const { nombre, apellido, email, password } = values;
+
+      try {
+        const { data } = await nuevoUsuario({
+          variables: {
+            usuario: {
+              nombre,
+              apellido,
+              email,
+              password,
+            },
+          },
+        });
+        console.log(data);
+      } catch (error) {
+        const { message } = error;
+      }
     },
   });
+
   return (
     <Layout>
       <h1 className="text-center text-white text-2xl font-light">Crear Nueva Cuenta</h1>

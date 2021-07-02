@@ -7,10 +7,10 @@ const Layout = ({ children }) => {
   return (
     <>
       <Head>
-        <link
+        {/* <link
           href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
           rel="stylesheet"
-        />
+        /> */}
         <title>CRM - Administracion de Clientes</title>
       </Head>
 
