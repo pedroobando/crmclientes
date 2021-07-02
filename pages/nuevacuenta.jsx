@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, gql } from '@apollo/client';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 const gqlNuevaCuenta = gql`
@@ -23,6 +23,8 @@ const NuevaCuenta = () => {
 
   // Estado para mensajes
   const [mensaje, setMensaje] = useState(null);
+
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
@@ -57,19 +59,25 @@ const NuevaCuenta = () => {
           },
         });
         // console.log(data);
+        setMensaje(`Se creo correctamente el usuario ${email}.`);
+        setTimeout(() => {
+          setMensaje(null);
+          formik.resetForm();
+          router.push('/login');
+        }, 3000);
       } catch (error) {
         const { message } = error;
         setMensaje(message);
         setTimeout(() => {
           setMensaje(null);
-        }, 5000);
+        }, 3000);
       }
     },
   });
 
   const mostrarMensaje = () => {
     return (
-      <div className=" bg-red-100 py-2 px-3 w-full my-3 max-w-sm text-center mx-auto rounded ">
+      <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto rounded ">
         <p>{mensaje}</p>
       </div>
     );
