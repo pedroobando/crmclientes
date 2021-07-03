@@ -1,5 +1,6 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import fetch from 'node-fetch';
+// setContext <= para agregar la authenticacion
 import { setContext } from 'apollo-link-context';
 
 const httpLink = createHttpLink({
@@ -10,11 +11,10 @@ const httpLink = createHttpLink({
 const authLink = setContext((_, { headers }) => {
   // Leer el localstorage
   const token = localStorage.getItem('token') || null;
-
   return {
     headers: {
       ...headers,
-      authorization: token,
+      authorization: token ? `Bearer ${token}` : '',
     },
   };
 });
