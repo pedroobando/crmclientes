@@ -89,7 +89,7 @@ const nuevocliente = () => {
               telefono,
             },
           },
-          update: (cache, { data }) => {
+          update: (cache, { data: { nuevoCliente } }) => {
             const { obtenerClientesVendedor } = cache.readQuery({
               query: OBTENER_CLIENTES_USUARIO,
             });
@@ -97,7 +97,7 @@ const nuevocliente = () => {
             cache.writeQuery({
               query: OBTENER_CLIENTES_USUARIO,
               data: {
-                obtenerClientesVendedor: [...obtenerClientesVendedor, data.nuevoCliente],
+                obtenerClientesVendedor: [...obtenerClientesVendedor, nuevoCliente],
               },
             });
           },
