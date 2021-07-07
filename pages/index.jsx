@@ -2,10 +2,12 @@ import Layout from '../components/Layout';
 import { gql, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import ClienteList from '../components/ClienteList';
 
 const OBTENER_CLIENTES_USUARIO = gql`
   query obtenerClientesVendedor {
     obtenerClientesVendedor {
+      id
       nombre
       apellido
       email
@@ -21,11 +23,12 @@ const index = () => {
 
   // console.log(data);
   // console.log(loading);
-  // console.log(error);
 
   if (loading) return <h1>Cargando...</h1>;
-  if (!data || !data.obtenerClientesVendedor) {
-    router.push('/login');
+
+  if (!data) {
+    router.replace('/login');
+    return <h2>Redirigiendo al Login...</h2>;
   }
 
   return (
@@ -42,17 +45,12 @@ const index = () => {
             <th className="w-1/5 py-2">Nombre</th>
             <th className="w-1/5 py-2">Empresa</th>
             <th className="w-1/5 py-2">Email</th>
+            <th className="w-1/5 py-2"></th>
           </tr>
         </thead>
         <tbody className="bg-white">
           {data.obtenerClientesVendedor.map((cliente, idx) => (
-            <tr key={idx}>
-              <td className="border px-4 py-2">
-                {cliente.nombre} {cliente.apellido}
-              </td>
-              <td className="border px-4 py-2">{cliente.empresa}</td>
-              <td className="border px-4 py-2">{cliente.email}</td>
-            </tr>
+            <ClienteList cliente={cliente} key={idx} />
           ))}
         </tbody>
       </table>

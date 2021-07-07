@@ -33,7 +33,20 @@ const OBTENER_CLIENTES_USUARIO = gql`
 const nuevocliente = () => {
   const router = useRouter();
   const [nuevoCliente, { loading: nuevoClienteLoading, error: nuevoClienteError }] =
-    useMutation(NUEVO_CLIENTE);
+    useMutation(NUEVO_CLIENTE, {
+      update: (cache, { data: { nuevoCliente } }) => {
+        const { obtenerClientesVendedor } = cache.readQuery({
+          query: OBTENER_CLIENTES_USUARIO,
+        });
+
+        cache.writeQuery({
+          query: OBTENER_CLIENTES_USUARIO,
+          data: {
+            obtenerClientesVendedor: [...obtenerClientesVendedor, nuevoCliente],
+          },
+        });
+      },
+    });
 
   // , {
   //   update(cache, { data: { nuevoCliente } }) {
@@ -89,25 +102,13 @@ const nuevocliente = () => {
               telefono,
             },
           },
-          update: (cache, { data: { nuevoCliente } }) => {
-            const { obtenerClientesVendedor } = cache.readQuery({
-              query: OBTENER_CLIENTES_USUARIO,
-            });
-
-            cache.writeQuery({
-              query: OBTENER_CLIENTES_USUARIO,
-              data: {
-                obtenerClientesVendedor: [...obtenerClientesVendedor, nuevoCliente],
-              },
-            });
-          },
         });
 
         router.push('/');
       } catch (error) {
-        console.log(error);
         const { message } = error;
         setShowMessage(message);
+        console.log(message);
         setTimeout(() => {
           setShowMessage(null);
         }, 3000);
