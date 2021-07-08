@@ -1,6 +1,6 @@
-import Layout from "../components/Layout";
+import Layout from '../../components/Layout';
 
-const Productos = () => {
+const index = () => {
   return (
     <Layout>
       <h1 className="text-2xl text-gray-800 font-light">Productos</h1>
@@ -8,4 +8,4 @@ const Productos = () => {
   );
 };
 
-export default Productos;
+export default index;

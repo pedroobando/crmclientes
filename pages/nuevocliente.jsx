@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import Layout from '../components/Layout';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
+import Swal from 'sweetalert2';
 
 const NUEVO_CLIENTE = gql`
   mutation nuevoCliente($input: ClienteInput) {
@@ -48,27 +48,6 @@ const nuevocliente = () => {
       },
     });
 
-  // , {
-  //   update(cache, { data: { nuevoCliente } }) {
-  //     // Obtener el objeto de cache que deseanis actualizar
-  //     const { obtenerClientesVendedor } = cache.readQuery({
-  //       query: OBTENER_CLIENTES_USUARIO,
-  //     });
-
-  //     // console.log(obtenerClientesVendedor);
-
-  //     // Resscribimos el cache (el cache nunca se debe modificar)
-  //     cache.writeQuery({
-  //       query: OBTENER_CLIENTES_USUARIO,
-  //       data: {
-  //         obtenerClientesVendedor: [...obtenerClientesVendedor, nuevoCliente],
-  //       },
-  //     });
-  //   },
-  // });
-
-  const [showMessage, setShowMessage] = useState(null);
-
   const formik = useFormik({
     initialValues: {
       nombre: '',
@@ -92,7 +71,7 @@ const nuevocliente = () => {
     onSubmit: async (values) => {
       const { nombre, apellido, empresa, email, telefono } = values;
       try {
-        const { data: nuevoClienteCreado } = await nuevoCliente({
+        const { data } = await nuevoCliente({
           variables: {
             'input': {
               nombre,
@@ -103,30 +82,21 @@ const nuevocliente = () => {
             },
           },
         });
-
+        Swal.fire(
+          'Ingresado',
+          `El cliente ${nombre} ${apellido}, se ingreso correctamente`,
+          'success'
+        );
         router.push('/');
       } catch (error) {
         const { message } = error;
-        setShowMessage(message);
-        console.log(message);
-        setTimeout(() => {
-          setShowMessage(null);
-        }, 3000);
+        Swal.fire('Error', message, 'error');
       }
     },
   });
 
-  const mostrarMensaje = () => {
-    return (
-      <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto rounded">
-        <p>{showMessage}</p>
-      </div>
-    );
-  };
-
   return (
     <Layout>
-      {showMessage && mostrarMensaje()}
       <h1 className="text-2xl text-gray-800 font-light">Nuevo Cliente</h1>
       <div className="flex justify-center mt-5">
         <div className="w-full max-w-lg" onSubmit={formik.handleSubmit}>

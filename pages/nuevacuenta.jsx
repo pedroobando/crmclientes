@@ -4,7 +4,7 @@ import Layout from '../components/Layout';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useMutation, gql } from '@apollo/client';
-import 'react-toastify/dist/ReactToastify.min.css';
+import Swal from 'sweetalert2';
 
 const gqlNuevaCuenta = gql`
   mutation nuevoUsuario($usuario: UsuarioInput) {
@@ -59,6 +59,8 @@ const NuevaCuenta = () => {
         });
         // console.log(data);
         setMensaje(`Se creo correctamente el usuario ${email}.`);
+        // Swal.fire('Actualizado', 'El cliente se actualizo correctamente', 'success');
+
         setTimeout(() => {
           setMensaje(null);
           formik.resetForm();
@@ -66,6 +68,9 @@ const NuevaCuenta = () => {
         }, 3000);
       } catch (error) {
         const { message } = error;
+
+        // Swal.fire('Error..!', message, 'error');
+
         setMensaje(message);
         setTimeout(() => {
           setMensaje(null);
