@@ -1,7 +1,9 @@
 import Head from 'next/head';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
+
 import { useRouter } from 'next/router';
+
 import 'tailwindcss/tailwind.css';
 
 const Layout = ({ children }) => {
@@ -9,10 +11,6 @@ const Layout = ({ children }) => {
   return (
     <>
       <Head>
-        {/* <link
-          href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
-          rel="stylesheet"
-        /> */}
         <title>CRM - Administracion de Clientes</title>
       </Head>
 

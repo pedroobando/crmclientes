@@ -1,52 +1,49 @@
-import Swal from 'sweetalert2';
 import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
+import Swal from 'sweetalert2';
 
-const ELIMINAR_CLIENTE = gql`
-  mutation eliminarCliente($id: ID!) {
-    eliminarCliente(id: $id)
+const ELIMINAR_PRODUCTO = gql`
+  mutation eliminarProducto($id: ID!) {
+    eliminarProducto(id: $id)
   }
 `;
 
-const OBTENER_CLIENTES_USUARIO = gql`
-  query obtenerClientesVendedor {
-    obtenerClientesVendedor {
+const OBTENER_PRODUCTOS = gql`
+  query obtenerProductos {
+    obtenerProductos {
       id
       nombre
-      apellido
-      email
-      empresa
-      telefono
+      existencia
+      precio
     }
   }
 `;
 
-const ClienteItem = ({ cliente }) => {
+const ProductoItem = ({ producto }) => {
   const router = useRouter();
-  const { nombre, apellido, empresa, email, id } = cliente;
+  const { id, nombre, precio, existencia } = producto;
+  const [
+    eliminarProducto,
+    { loading: eliminarProductoLoading, error: eliminarProductoError },
+  ] = useMutation(ELIMINAR_PRODUCTO, {
+    update(cache) {
+      const { obtenerProductos } = cache.readQuery({
+        query: OBTENER_PRODUCTOS,
+      });
+      cache.writeQuery({
+        query: OBTENER_PRODUCTOS,
+        data: {
+          obtenerProductos: obtenerProductos.filter(
+            (productoActual) => productoActual.id !== id
+          ),
+        },
+      });
+    },
+  });
 
-  const [eliminarCliente, { loading: clienteLoading, error: clienteError }] = useMutation(
-    ELIMINAR_CLIENTE,
-    {
-      update(cache) {
-        const { obtenerClientesVendedor } = cache.readQuery({
-          query: OBTENER_CLIENTES_USUARIO,
-        });
-        cache.writeQuery({
-          query: OBTENER_CLIENTES_USUARIO,
-          data: {
-            obtenerClientesVendedor: obtenerClientesVendedor.filter(
-              (clienteActual) => clienteActual.id !== id
-            ),
-          },
-        });
-      },
-    }
-  );
-
-  const handleEliminarCliente = (id) => {
+  const handleEliminarProducto = () => {
     Swal.fire({
-      title: 'Deseas eliminar este cliente.?',
+      title: `Deseas eliminar - ${nombre}.?`,
       text: 'Esta accion no podra revertirse..!',
       icon: 'warning',
       showCancelButton: true,
@@ -57,42 +54,42 @@ const ClienteItem = ({ cliente }) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const { data } = await eliminarCliente({
+          const { data } = await eliminarProducto({
             variables: {
               id,
             },
           });
 
           Swal.fire(
-            `${data.eliminarCliente}`,
-            `El cliente  ${nombre} ${apellido} ha sido eliminado`,
+            `${data.eliminarProducto}`,
+            `El producto ${nombre} fue eliminado`,
             'success'
           );
         } catch (error) {
           console.log(error);
+          const { message } = error;
+          Swal.fire('Error', `${message}`, 'error');
         }
       }
     });
   };
 
-  const handleModificarCliente = (id) => {
+  const handleEditarProducto = () => {
     router.push({
-      pathname: '/editarcliente/[id]',
+      pathname: '/productos/editar/[id]',
       query: { id },
     });
   };
 
   return (
     <tr>
-      <td className="border px-4 py-2">
-        {nombre} {apellido}
-      </td>
-      <td className="border px-4 py-2">{empresa}</td>
-      <td className="border px-4 py-2">{email}</td>
+      <td className="border px-4 py-2">{nombre}</td>
+      <td className="border px-4 py-2 text-right">{existencia}</td>
+      <td className="border px-4 py-2 text-right">{precio}</td>
       <td className="border px-4 py-2">
         <button
           type="button"
-          onClick={() => handleModificarCliente(id)}
+          onClick={handleEditarProducto}
           className="flex justify-center items-center  px-4 py-2 w-full rounded shadow border-2 border-green-500 text-green-500 uppercase text-sm font-bold hover:bg-green-500 hover:text-white"
         >
           <svg
@@ -112,11 +109,10 @@ const ClienteItem = ({ cliente }) => {
           Modificar
         </button>
       </td>
-
       <td className="border px-4 py-2">
         <button
           type="button"
-          onClick={() => handleEliminarCliente(id)}
+          onClick={handleEliminarProducto}
           className="flex justify-center items-center  px-4 py-2 w-full rounded shadow border-2 border-red-500 text-red-500 uppercase text-sm font-bold hover:bg-red-500 hover:text-white"
         >
           <svg
@@ -140,4 +136,4 @@ const ClienteItem = ({ cliente }) => {
   );
 };
 
-export default ClienteItem;
+export default ProductoItem;

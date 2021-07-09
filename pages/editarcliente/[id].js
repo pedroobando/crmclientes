@@ -9,6 +9,7 @@ import Layout from '../../components/Layout';
 const OBTENER_CLIENTE = gql`
   query obtenerCliente($id: ID!) {
     obtenerCliente(id: $id) {
+      id
       nombre
       apellido
       email

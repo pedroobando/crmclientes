@@ -3,6 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import ClienteItem from '../components/ClienteItem';
+import Spinner from '../components/Spinner';
 
 const OBTENER_CLIENTES_USUARIO = gql`
   query obtenerClientesVendedor {
@@ -19,17 +20,19 @@ const OBTENER_CLIENTES_USUARIO = gql`
 
 const index = () => {
   const router = useRouter();
-  const { data, loading, error } = useQuery(OBTENER_CLIENTES_USUARIO);
+  const {
+    data,
+    loading: obtenerClientesLoading,
+    error: obtenerClientesError,
+  } = useQuery(OBTENER_CLIENTES_USUARIO);
 
+  if (obtenerClientesLoading) return <Spinner loading={obtenerClientesLoading} />;
+  if (obtenerClientesError) return <h1>Problemas la llamada al origen de datos</h1>;
   // console.log(data);
-  // console.log(loading);
+  // console.log(obtenerClientesLoading);
+  // console.log(obtenerClientesError);
 
-  if (loading) return <h1>Cargando...</h1>;
-
-  if (!data) {
-    router.replace('/login');
-    return <h2>Redirigiendo al Login...</h2>;
-  }
+  if (!data.obtenerClientesVendedor) return router.push('/login');
 
   return (
     <Layout>

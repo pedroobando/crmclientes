@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const OBTENER_USUARIO = gql`
   query obtenerUsuario {
@@ -14,10 +15,19 @@ const OBTENER_USUARIO = gql`
 const Header = () => {
   const router = useRouter();
 
-  const { data, loading, error } = useQuery(OBTENER_USUARIO);
+  const {
+    data,
+    loading,
+    error: obtenerUsuarioError,
+    refetch,
+  } = useQuery(OBTENER_USUARIO);
   // console.log(data);
   // console.log(loading);
   // console.log(error);
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   const handleCerrarSesion = () => {
     localStorage.removeItem('token');
@@ -25,8 +35,9 @@ const Header = () => {
   };
 
   // Proteger que no accesamos a data antes de tener resultados
-  if (loading) return null;
-  if (!data.obtenerUsuario) return router.replace('/login');
+  if (loading) return <></>;
+  if (obtenerUsuarioError) return <h2>Error comunicacion</h2>;
+  if (!data.obtenerUsuario) return router.push('/login');
   const { nombre, apellido } = data.obtenerUsuario;
 
   return (
