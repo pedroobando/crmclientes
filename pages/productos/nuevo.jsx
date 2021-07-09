@@ -74,7 +74,7 @@ const nuevo = () => {
         });
         Swal.fire(
           'Ingresado',
-          `El producto ${data.nombre}, se ingreso correctamente`,
+          `El producto ${nombre}, se ingreso correctamente`,
           'success'
         );
         router.push('/productos');

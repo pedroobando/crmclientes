@@ -15,19 +15,14 @@ const OBTENER_USUARIO = gql`
 const Header = () => {
   const router = useRouter();
 
-  const {
-    data,
-    loading,
-    error: obtenerUsuarioError,
-    refetch,
-  } = useQuery(OBTENER_USUARIO);
+  const { data, loading, error: obtenerUsuarioError } = useQuery(OBTENER_USUARIO);
   // console.log(data);
   // console.log(loading);
   // console.log(error);
 
-  useEffect(() => {
-    refetch();
-  }, []);
+  // useEffect(() => {
+  //   refetch();
+  // }, []);
 
   const handleCerrarSesion = () => {
     localStorage.removeItem('token');
