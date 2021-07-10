@@ -67,7 +67,7 @@ const EditarProducto = () => {
       .positive('El precio del producto no debe ser numero negativo'),
   });
 
-  const handleSubmit = async (values) => {
+  const handleSubmitProducto = async (values) => {
     try {
       const { nombre, precio, existencia } = values;
       const { data } = await actualizarProducto({
@@ -108,7 +108,7 @@ const EditarProducto = () => {
             validationSchema={schemaValidacion}
             enableReinitialize
             initialValues={obtenerProducto}
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmitProducto}
           >
             {(props) => {
               // console.log(props);
