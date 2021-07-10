@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
@@ -94,7 +95,29 @@ const EditarProducto = () => {
   };
 
   if (obtenerProductoLoading) return <Spinner />;
-  if (obtenerProductoError) return <h1>Problemas la llamada al origen de datos</h1>;
+  if (obtenerProductoError)
+    return (
+      <Layout>
+        <h1 className="text-2xl mb-4 ">Problemas la llamada al origen de datos</h1>
+        <Link href="/productos" className="">
+          <a className=" font-bold bg-transparent w-full mt-5 p-2 text-blue-800 border-2 border-blue-800 rounded uppercase hover:text-white hover:bg-blue-800">
+            Volver a Productos
+          </a>
+        </Link>
+      </Layout>
+    );
+
+  if (!data)
+    return (
+      <Layout>
+        <h1>
+          Accion no permitida
+          <link href="/productos">
+            <a>Volver a Productos</a>
+          </link>
+        </h1>
+      </Layout>
+    );
 
   const { obtenerProducto } = data;
   // console.log(data);
