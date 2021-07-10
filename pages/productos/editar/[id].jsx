@@ -100,7 +100,7 @@ const EditarProducto = () => {
       <Layout>
         <h1 className="text-2xl mb-4 ">Problemas la llamada al origen de datos</h1>
         <Link href="/productos" className="">
-          <a className=" font-bold bg-transparent w-full mt-5 p-2 text-blue-800 border-2 border-blue-800 rounded uppercase hover:text-white hover:bg-blue-800">
+          <a className="font-bold bg-transparent w-full mt-5 p-2 text-blue-800 border-2 border-blue-800 rounded uppercase hover:text-white hover:bg-blue-800">
             Volver a Productos
           </a>
         </Link>
