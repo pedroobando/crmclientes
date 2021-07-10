@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout';
 import { useFormik } from 'formik';
@@ -21,9 +20,6 @@ const NuevaCuenta = () => {
   // Mutation para crear nuevo usuarios
   const [nuevoUsuario] = useMutation(gqlNuevaCuenta);
 
-  // Estado para mensajes
-  const [mensaje, setMensaje] = useState(null);
-
   const router = useRouter();
 
   const formik = useFormik({
@@ -45,7 +41,6 @@ const NuevaCuenta = () => {
     }),
     onSubmit: async (values) => {
       const { nombre, apellido, email, password } = values;
-
       try {
         const { data } = await nuevoUsuario({
           variables: {
@@ -57,39 +52,22 @@ const NuevaCuenta = () => {
             },
           },
         });
-        // console.log(data);
-        setMensaje(`Se creo correctamente el usuario ${email}.`);
-        // Swal.fire('Actualizado', 'El cliente se actualizo correctamente', 'success');
-
-        setTimeout(() => {
-          setMensaje(null);
-          formik.resetForm();
-          router.push('/login');
-        }, 3000);
+        Swal.fire(
+          'Usuario Creado',
+          `Usuario ${nombre} ${apellido}, se ingreso correctamente`,
+          'success'
+        );
+        router.push('/login');
       } catch (error) {
         const { message } = error;
-
-        // Swal.fire('Error..!', message, 'error');
-
         setMensaje(message);
-        setTimeout(() => {
-          setMensaje(null);
-        }, 3000);
+        Swal.fire('Error', `${message}`, 'error');
       }
     },
   });
 
-  const mostrarMensaje = () => {
-    return (
-      <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto rounded">
-        <p>{mensaje}</p>
-      </div>
-    );
-  };
-
   return (
     <Layout>
-      {mensaje && mostrarMensaje()}
       <h1 className="text-center text-white text-2xl font-light">Crear Nueva Cuenta</h1>
 
       <div className="flex justify-center mt-5">

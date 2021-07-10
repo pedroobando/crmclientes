@@ -126,9 +126,15 @@ const Login = () => {
 
             <input
               type="submit"
-              className="bg-gray-800 w-full mt-5 p-2 text-white uppercase hover:bg-gray-900"
+              className="bg-gray-800 w-full rounded mt-5 p-2 text-white uppercase hover:bg-gray-900"
               value="Iniciar Sesion"
             />
+            <button
+              onClick={() => routes.push('/nuevacuenta')}
+              className="bg-transparent border-2 border-gray-800 rounded w-full mt-5 p-2 text-gray-800 uppercase shadows-md hover:bg-gray-900 hover:text-white"
+            >
+              Crear Usuario
+            </button>
           </form>
         </div>
       </div>
