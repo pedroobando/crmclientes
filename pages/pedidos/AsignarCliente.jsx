@@ -43,8 +43,8 @@ const AsignarCliente = () => {
 
   // if (!data.obtenerClientesVendedor) return router.push('/login');
 
-  const handleSelectCliente = (sabor) => {
-    setCliente(sabor);
+  const handleSelectCliente = (cliente) => {
+    setCliente(cliente);
   };
 
   const { obtenerClientesVendedor } = data;
@@ -52,7 +52,7 @@ const AsignarCliente = () => {
   return (
     <>
       <p className="mt-10 my-2 bg-white border-l-4 border-gray-800 text-gray-700 p-2 text-sm font-bold">
-        Asignar un cliente al pedido
+        1.- Asignar un cliente al pedido
       </p>
       <Select
         className="mt-2"
