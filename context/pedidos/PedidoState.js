@@ -36,6 +36,9 @@ const PedidoState = ({ children }) => {
       });
     } else {
       nuevoState = productoSeleccionados;
+      // dispatch({
+      //   type: ACTUALIZAR_TOTAL,
+      // });
     }
 
     dispatch({

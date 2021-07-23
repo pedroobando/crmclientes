@@ -19,7 +19,7 @@ const AsignarProducto = () => {
   const [producto, setProducto] = useState([]);
 
   const pedidoContext = useContext(PedidoContext);
-  const { asignarProductos } = pedidoContext;
+  const { asignarProductos, actualizarTotal } = pedidoContext;
 
   const {
     data,
@@ -29,6 +29,7 @@ const AsignarProducto = () => {
 
   useEffect(() => {
     asignarProductos(producto);
+    actualizarTotal();
     // console.log(producto);
   }, [producto]);
 

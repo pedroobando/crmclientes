@@ -1,18 +1,37 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import Layout from '../../components/Layout';
 import AsignarCliente from './AsignarCliente';
 import AsignarProducto from './AsignarProducto';
 import ResumenPedido from './ResumenPedido';
 import PedidoTotal from './PedidoTotal';
 
+import PedidoContext from '../../context/pedidos/PedidoContext';
+
 import { gql, useMutation } from '@apollo/client';
 import { useRouter } from 'next/router';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
+
 import Swal from 'sweetalert2';
 
+const NUEVO_PEDIDO = gql`
+  mutation nuevoPedido($input: PedidoInput!) {
+    nuevoPedido(input: $input) {
+      id
+    }
+  }
+`;
+
+// total
+// cliente
+// vendedor
+// fecha
+// estado
+// pedido {
+//   cantidad
+//   precio
+//   producto
+// }
+
 // Context Pedidos
-import PedidoContext from '../../context/pedidos/PedidoContext';
 
 const nuevo = () => {
   const router = useRouter();
@@ -20,12 +39,48 @@ const nuevo = () => {
   const pedidoContext = useContext(PedidoContext);
   const { cliente, total, productos } = pedidoContext;
 
+  const [nuevoPedido, { loading: nuevoPedidoLoading, error: nuevoPedidoError }] =
+    useMutation(NUEVO_PEDIDO);
+
+  // useEffect(() => {
+  //   validadPedido();
+  // }, [cliente, total, productos]);
+
+  // const { id } = cliente;
+
   const validadPedido = () => {
     return !productos.every((producto) => producto.cantidad > 0) ||
       total === 0 ||
       cliente.length === 0
       ? ' opacity-50 cursor-not-allowed '
       : '';
+  };
+
+  const crearNuevoPedido = async () => {
+    const pedido = productos.map(
+      ({ existencia, __typename, nombre, precio, ...producto }) => producto
+    );
+    // console.log(pedido);
+
+    try {
+      const { data } = await nuevoPedido({
+        variables: {
+          input: {
+            cliente: '60e9b199a3a32858c9ce5098',
+            estado: 'PENDIENTE',
+            pedido: [
+              { 'producto': '60e9b20fa3a32858c9ce50a5', 'cantidad': 1, 'precio': 23 },
+            ],
+          },
+        },
+      });
+      Swal.fire('Nuevo Pedido', `Creado nuevo pedido`, 'success');
+      router.push('/pedidos');
+    } catch (error) {
+      console.log(error);
+      const { message } = error;
+      Swal.fire('Error', message, 'error');
+    }
   };
 
   return (
@@ -42,6 +97,7 @@ const nuevo = () => {
           <button
             type="button"
             className={`bg-gray-700 w-full mt-5 p-2 text-white uppercase font-bold rounded hover:bg-gray-900 ${validadPedido()}`}
+            onClick={() => crearNuevoPedido()}
           >
             Registrar Pedido
           </button>

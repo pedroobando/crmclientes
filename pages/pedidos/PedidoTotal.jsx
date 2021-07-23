@@ -3,7 +3,7 @@ import PedidoContext from '../../context/pedidos/PedidoContext';
 
 const PedidoTotal = () => {
   const pedidoContext = useContext(PedidoContext);
-  const { total } = pedidoContext;
+  const { total = 0 } = pedidoContext;
 
   return (
     <div className="flex items-center mt-5 justify-between bg-gray-300 p-3 border-solid border-2 border-gray-400">
