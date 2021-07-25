@@ -43,7 +43,7 @@ const index = () => {
   }, [startPolling, stopPolling]);
 
   if (mejoresClientesLoading) return <Spinner />;
-  if (mejoresClientesError) return <h1>Problemas la llamada al origen de datos</h1>;
+  if (mejoresClientesError) return <h1>Problemas la llamada al origen de datos.</h1>;
 
   const { mejoresClientes } = data;
   const clientesGrafica = [];
