@@ -12,6 +12,20 @@ const ACTUALIZAR_PEDIDO = gql`
   }
 `;
 
+const ELIMINAR_PEDIDO = gql`
+  mutation eliminarPedido($id: ID!) {
+    eliminarPedido(id: $id)
+  }
+`;
+
+const OBTENER_PEDIDOS = gql`
+  query obtenerPedidosVendedor {
+    obtenerPedidosVendedor {
+      id
+    }
+  }
+`;
+
 const PedidoItem = ({ pedido }) => {
   const {
     id,
@@ -21,17 +35,32 @@ const PedidoItem = ({ pedido }) => {
     total,
     estado,
   } = pedido;
-  const [actualizarPedido] = useMutation(ACTUALIZAR_PEDIDO);
+
   const [estadoPedido, setEstadoPedido] = useState(estado);
   const [clases, setClases] = useState('');
 
   useEffect(() => {
     if (estadoPedido) {
-      // setEstadoPedido(estadoPedido);
-
       clasePedido(estadoPedido);
     }
   }, [estadoPedido]);
+
+  const [actualizarPedido] = useMutation(ACTUALIZAR_PEDIDO);
+  const [eliminarPedido] = useMutation(ELIMINAR_PEDIDO, {
+    update(cache) {
+      const { obtenerPedidosVendedor } = cache.readQuery({
+        query: OBTENER_PEDIDOS,
+      });
+      cache.writeQuery({
+        query: OBTENER_PEDIDOS,
+        data: {
+          obtenerPedidosVendedor: obtenerPedidosVendedor.filter(
+            (pedidoActual) => pedidoActual.id !== id
+          ),
+        },
+      });
+    },
+  });
 
   const clasePedido = () => {
     if (estadoPedido === 'PENDIENTE') {
@@ -58,10 +87,39 @@ const PedidoItem = ({ pedido }) => {
       });
       Swal.fire('Correcto', `Estado del pedido actualizado`, 'success');
     } catch (error) {
-      // console.log(error);
       const { message } = error;
       Swal.fire('Error', message, 'error');
     }
+  };
+
+  const handleEliminarPedido = async (id) => {
+    console.log(id);
+    Swal.fire({
+      title: `Deseas eliminar el pedido de ${nombreCompleto}.?`,
+      text: 'Esta accion no podra revertirse..!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, eliminar',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const { data } = await eliminarPedido({
+            variables: {
+              id,
+            },
+          });
+
+          Swal.fire(`Eliminado`, `${data.eliminarPedido}`, 'success');
+        } catch (error) {
+          console.log(error);
+          const { message } = error;
+          Swal.fire('Error', `${message}`, 'error');
+        }
+      }
+    });
   };
 
   return (
@@ -130,9 +188,14 @@ const PedidoItem = ({ pedido }) => {
         <p className="text-gray-800 mt-3 font-bold">
           Total a pagar: <span className="font-light">$ {total}</span>
         </p>
-        <button className="uppercase text-xs font-bold flex items-center mt-4 py-2 bg-red-800 px-5 inline-block text-white rounded leading-tight ">
-          Eliminar Pedido
-        </button>
+        {estadoPedido === 'CANCELADO' && (
+          <button
+            className="uppercase text-xs font-bold flex items-center mt-4 py-2 bg-red-800 px-5 inline-block text-white rounded leading-tight"
+            onClick={() => handleEliminarPedido(id)}
+          >
+            Eliminar Pedido
+          </button>
+        )}
       </div>
     </div>
   );

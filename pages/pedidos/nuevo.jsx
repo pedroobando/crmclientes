@@ -20,6 +20,29 @@ const NUEVO_PEDIDO = gql`
   }
 `;
 
+const OBTENER_PEDIDOS = gql`
+  query obtenerPedidosVendedor {
+    obtenerPedidosVendedor {
+      id
+      total
+      estado
+      vendedor
+      cliente {
+        id
+        email
+        telefono
+        nombreCompleto
+      }
+      pedido {
+        id
+        cantidad
+        nombre
+        precio
+      }
+    }
+  }
+`;
+
 const nuevo = () => {
   const router = useRouter();
 
@@ -27,7 +50,17 @@ const nuevo = () => {
   const { cliente, total, productos } = pedidoContext;
 
   const [nuevoPedido, { loading: nuevoPedidoLoading, error: nuevoPedidoError }] =
-    useMutation(NUEVO_PEDIDO, {});
+    useMutation(NUEVO_PEDIDO, {
+      update: (cache, { data: { nuevoPedido } }) => {
+        const { obtenerPedidosVendedor } = cache.readQuery({
+          query: OBTENER_PEDIDOS,
+        });
+        cache.writeQuery({
+          query: OBTENER_PEDIDOS,
+          data: { obtenerPedidosVendedor: [...obtenerPedidosVendedor, nuevoPedido] },
+        });
+      },
+    });
 
   const validadPedido = () => {
     return !productos.every((producto) => producto.cantidad > 0) ||
@@ -46,7 +79,7 @@ const nuevo = () => {
     }));
 
     // const pedido = productos.map(({ __typename, existencia, ...producto }) => producto);
-    console.log(pedido);
+    // console.log(pedido);
     const { id } = cliente;
 
     try {
@@ -62,7 +95,7 @@ const nuevo = () => {
       router.push('/pedidos');
       Swal.fire('Correcto', `El pedido se registro correctamente`, 'success');
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       const { message } = error;
       Swal.fire('Error', message, 'error');
     }

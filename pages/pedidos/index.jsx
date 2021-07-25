@@ -11,8 +11,6 @@ const OBTENER_PEDIDOS = gql`
       total
       cliente {
         id
-        # nombre
-        # apellido
         email
         telefono
         nombreCompleto
@@ -36,16 +34,12 @@ const index = () => {
     data,
   } = useQuery(OBTENER_PEDIDOS);
 
-  // const [actualizarCliente] = useMutation(ACTUALIZAR_CLIENTE);
-
   if (obtenerPedidosLoading) return <Spinner />;
   if (obtenerPedidosError) return <h1>Problemas la llamada al origen de datos</h1>;
 
   // console.log(data);
   // console.log(obtenerPedidosLoading);
   // console.log(obtenerPedidosError);
-
-  // console.log(data);
 
   return (
     <Layout>
