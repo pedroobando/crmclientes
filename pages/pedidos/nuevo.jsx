@@ -20,19 +20,6 @@ const NUEVO_PEDIDO = gql`
   }
 `;
 
-// total
-// cliente
-// vendedor
-// fecha
-// estado
-// pedido {
-//   cantidad
-//   precio
-//   producto
-// }
-
-// Context Pedidos
-
 const nuevo = () => {
   const router = useRouter();
 
@@ -40,13 +27,7 @@ const nuevo = () => {
   const { cliente, total, productos } = pedidoContext;
 
   const [nuevoPedido, { loading: nuevoPedidoLoading, error: nuevoPedidoError }] =
-    useMutation(NUEVO_PEDIDO);
-
-  // useEffect(() => {
-  //   validadPedido();
-  // }, [cliente, total, productos]);
-
-  // const { id } = cliente;
+    useMutation(NUEVO_PEDIDO, {});
 
   const validadPedido = () => {
     return !productos.every((producto) => producto.cantidad > 0) ||
@@ -57,31 +38,39 @@ const nuevo = () => {
   };
 
   const crearNuevoPedido = async () => {
-    const pedido = productos.map(
-      ({ existencia, __typename, nombre, precio, ...producto }) => producto
-    );
-    // console.log(pedido);
+    const pedido = productos.map((item) => ({
+      producto: item.id,
+      cantidad: item.cantidad,
+      nombre: item.nombre,
+      precio: item.precio,
+    }));
+
+    // const pedido = productos.map(({ __typename, existencia, ...producto }) => producto);
+    console.log(pedido);
+    const { id } = cliente;
 
     try {
-      const { data } = await nuevoPedido({
+      const { data, errors } = await nuevoPedido({
         variables: {
           input: {
-            cliente: '60e9b199a3a32858c9ce5098',
-            estado: 'PENDIENTE',
-            pedido: [
-              { 'producto': '60e9b20fa3a32858c9ce50a5', 'cantidad': 1, 'precio': 23 },
-            ],
+            cliente: id,
+            pedido,
           },
         },
       });
-      Swal.fire('Nuevo Pedido', `Creado nuevo pedido`, 'success');
+
       router.push('/pedidos');
+      Swal.fire('Correcto', `El pedido se registro correctamente`, 'success');
     } catch (error) {
       console.log(error);
       const { message } = error;
       Swal.fire('Error', message, 'error');
     }
   };
+
+  if (nuevoPedidoError) {
+    <h1>Error</h1>;
+  }
 
   return (
     <Layout>
